@@ -4,7 +4,50 @@
 
 & {
   width:800px;
-  background-color: #282c34;
-  height:200px;
-  margin: 0 auto;
+  background-color: #ffffff;
+  margin: 20px auto;
+  padding:20px 10px;
+}
+
+#chatt{
+	width: 800px;
+	margin: 20px auto;
+  #talk{
+    width: 800px;
+    height: 400px;
+    overflow: scroll;
+    border : 1px solid #aaa;
+
+    div{
+      width: 70%;
+      display: inline-block;
+      padding: 6px;
+      border-radius:10px;
+      
+    }
+  }
+  #msg{
+    width: 740px;
+    height:100px;
+    display: inline-block;
+  }
+
+  #sendZone > *{
+    vertical-align: top;
+  }
+
+  #btnSend{
+    width: 54px;
+    height: 100px;
+  }
+
+  .me{
+    background-color : #ffc;
+    margin : 1px 0px 2px 30%;	
+  }
+
+  .other{
+    background-color : #eee;
+    margin : 2px;
+  }
 }
