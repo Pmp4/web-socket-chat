@@ -1,10 +1,27 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {createGlobalStyle} from 'styled-components';
 import reset from 'styled-reset'
+
+const initializationChatt = {
+    name: "",
+    date: "",
+    msg: "",
+}
 
 const Chat = () => {
     const [msg, setMsg] = useState("");
     const [name, setName] = useState("홍길동");
+    const [chatt, setChatt] = useState([]);
+
+    let ws = useRef(null);
+
+    const msgBox = chatt.map((item) => (
+        <div className={item.name === name ? 'me' : 'other'}>
+            <span><b>{item.mid}</b></span> [ {item.date} ]<br/>
+            <span>{item.msg}</span>
+        </div>
+    ));
+
 
     const GlobalStyle = createGlobalStyle`
         ${reset}
@@ -19,9 +36,7 @@ const Chat = () => {
     }
 
     var data = {};  //전송 데이터(JSON)
-    let ws = new WebSocket("ws://localhost:8080/socket/chatt");
-    var mid = getId('mid');
-    var talk = getId('talk');
+    // let ws = "";
 
     const onText = event => {
         console.log(event.target.value);
@@ -29,15 +44,18 @@ const Chat = () => {
     }
     
     const webSocketLogin = useCallback(() => {
-        // ws = new WebSocket("ws://localhost:8080/socket/chatt");
-        console.log("hello");
-        ws.onmessage = function(msg){
+        ws.current = new WebSocket("ws://localhost:8080/socket/chatt");
+
+        ws.current.onmessage = function(msg){
             console.log(msg);
             var data = JSON.parse(msg.data);
-            var css;
+            console.log(data);
+            
+
+            /*var css;
             
             console.log(data.mid);
-            if(data.mid === mid.value){
+            if(data.mid === name){
                 css = 'class=me';
             }else{
                 css = 'class=other';
@@ -48,8 +66,10 @@ const Chat = () => {
                         <span>${data.msg}</span>
                             </div>`;
                         
-            talk.innerHTML += item;
-            talk.scrollTop=talk.scrollHeight;//스크롤바 하단으로 이동
+            
+            document.getElementById("talk").innerHTML += item;
+            document.getElementById("talk").scrollTop=document.getElementById("talk").scrollHeight;//스크롤바 하단으로 이동
+            */
         }
     });
 
@@ -59,7 +79,7 @@ const Chat = () => {
             data.msg = msg;
             data.date = new Date().toLocaleString();
             var temp = JSON.stringify(data);
-            ws.send(temp);
+            ws.current.send(temp);
         }
         setMsg("");
     });
@@ -73,10 +93,12 @@ const Chat = () => {
                     <input type='text' id='mid' defaultValue={name} onChange={(event => setName(event.target.value))}/>
                     <input type='button' defaultValue='로그인' id='btnLogin' onClick={webSocketLogin}/>
                     <br/>
-                    <div id='talk'></div>
+                    <div id='talk'>
+                        {msgBox}
+                    </div>
                     <div id='sendZone'>
-                        <textarea id='msg' defaultValue={msg} onChange={onText}
-                            onKeyUp={(ev) => {if(ev.keyCode === 13){send();}}}></textarea>
+                        <textarea id='msg' value={msg} onChange={onText}
+                            onKeyDown={(ev) => {if(ev.keyCode === 13){send();}}}></textarea>
                         <input type='button' defaultValue='전송' id='btnSend' onClick={send}/>
                     </div>
                 </div>
