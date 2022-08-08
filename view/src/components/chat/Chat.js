@@ -1,12 +1,8 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {createGlobalStyle} from 'styled-components';
 import reset from 'styled-reset'
+import ChattService from '../../api/ChattService';
 
-const initializationChatt = {
-    name: "",
-    date: "",
-    msg: "",
-}
 
 const Chat = () => {
     const [msg, setMsg] = useState("");
@@ -21,6 +17,15 @@ const Chat = () => {
             <span>{item.msg}</span>
         </div>
     ));
+
+
+    useEffect(() => {
+        ChattService.chattView()
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => alert(error));
+    }, []);
 
 
     const GlobalStyle = createGlobalStyle`
