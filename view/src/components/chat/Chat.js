@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import {createGlobalStyle} from 'styled-components';
 import reset from 'styled-reset'
 import ChattService from '../../api/ChattService';
@@ -7,10 +6,12 @@ import ChattService from '../../api/ChattService';
 
 const Chat = () => {
     const [msg, setMsg] = useState("");
-    const [name, setName] = useState("홍길동");
+    const [name, setName] = useState("");
     const [chatt, setChatt] = useState([]);
+    const [chkLog, setChkLog] = useState(false);
 
-    let ws = useRef(null);
+    const ws = useRef(null);    //webSocket을 담는 변수, 
+                                //컴포넌트가 변경될 때 객체가 유지되어야하므로 'ref'로 저장
 
     const msgBox = chatt.map((item) => (
         <div className={item.name === name ? 'me' : 'other'}>
@@ -25,7 +26,6 @@ const Chat = () => {
             .then((response) => {
                 console.log(response);
             })
-            // .catch((error) => alert(error));
     }, []);
 
 
@@ -51,41 +51,68 @@ const Chat = () => {
     
     const webSocketLogin = useCallback(() => {
         ws.current = new WebSocket("ws://localhost:8080/socket/chatt");
+        // console.log(ws.current);
 
         ws.current.onmessage = function(msg){
             console.log(msg);
             var data = JSON.parse(msg.data);
             console.log(data);
             
-
-            /*var css;
+            var css;
             
             console.log(data.mid);
-            if(data.mid === name){
+            if(data.name === name){
                 css = 'class=me';
             }else{
                 css = 'class=other';
             }
             
             var item = `<div ${css} >
-                            <span><b>${data.mid}</b></span> [ ${data.date} ]<br/>
+                            <span><b>${data.name}</b></span> [ ${data.date} ]<br/>
                         <span>${data.msg}</span>
                             </div>`;
                         
             
             document.getElementById("talk").innerHTML += item;
             document.getElementById("talk").scrollTop=document.getElementById("talk").scrollHeight;//스크롤바 하단으로 이동
-            */
+            
         }
     });
 
     const send = useCallback(() => {
+        if(!chkLog) {
+            if(name === "") {
+                alert("이름을 입력하세요.");
+                document.getElementById("name").focus();
+                return;
+            }
+            webSocketLogin();
+            setChkLog(true);
+        }
+
         if(msg !== ''){
-            data.mid = getId('mid').value;
+            data.name = name;
             data.msg = msg;
             data.date = new Date().toLocaleString();
-            var temp = JSON.stringify(data);
-            ws.current.send(temp);
+            const temp = JSON.stringify(data);
+            
+            if(ws.current.readyState === 0) {
+                ws.current.onopen = () => { //webSocket이 맺어지고 난 후, 실행
+                    console.log(ws.current.readyState);
+                    ws.current.send(temp);
+                }
+            }else {
+                ws.current.send(temp);
+            }
+            
+            // ws.current.onopen = () => { //webSocket이 맺어지고 난 후, 실행
+            //     console.log(ws.current.readyState);
+            //     ws.current.send(temp);
+            // }
+        }else {
+            alert("메세지를 입력하세요.");
+            document.getElementById("msg").focus();
+            return;
         }
         setMsg("");
     });
@@ -95,17 +122,21 @@ const Chat = () => {
             <GlobalStyle/>
             <div id="chat-wrap">
                 <div id='chatt'>
-                    <h1>WebSocket Chatting</h1>
-                    <input type='text' id='mid' defaultValue={name} onChange={(event => setName(event.target.value))}/>
-                    <input type='button' defaultValue='로그인' id='btnLogin' onClick={webSocketLogin}/>
+                    <h1 id="title">WebSocket Chatting</h1>
                     <br/>
                     <div id='talk'>
                         {msgBox}
                     </div>
+                    <input disabled={chkLog}
+                        placeholder='이름을 입력하세요.' 
+                        type='text' 
+                        id='name' 
+                        value={name} 
+                        onChange={(event => setName(event.target.value))}/>
                     <div id='sendZone'>
                         <textarea id='msg' value={msg} onChange={onText}
                             onKeyDown={(ev) => {if(ev.keyCode === 13){send();}}}></textarea>
-                        <input type='button' defaultValue='전송' id='btnSend' onClick={send}/>
+                        <input type='button' value='전송' id='btnSend' onClick={send}/>
                     </div>
                 </div>
             </div>
