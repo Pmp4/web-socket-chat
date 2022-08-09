@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
+import $ from 'jquery';
 import {createGlobalStyle} from 'styled-components';
 import reset from 'styled-reset'
 import ChattService from '../../api/ChattService';
@@ -24,7 +25,7 @@ const Chat = () => {
             .then((response) => {
                 console.log(response);
             })
-            .catch((error) => alert(error));
+            // .catch((error) => alert(error));
     }, []);
 
 

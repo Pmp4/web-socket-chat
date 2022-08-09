@@ -1,7 +1,7 @@
-import httpCommon from "../http-common";
+import httpCommon from "./http-common";
 
 const chattView = () => {
-    return httpCommon.get(`/chatt`);
+    return httpCommon.get(`/chatt/`);
 }
 
 export default {chattView};
