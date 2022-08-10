@@ -38,9 +38,18 @@ input[type='number']::-webkit-outer-spin-button {
     width: 100%;
     height: 400px;
     overflow-y: auto;
-    box-shadow: inset 5px 5px 10px #dfdfdf,
-      inset -5px -5px 10px #fbfbfb;
     border-radius: 18px;
+    position: relative;
+
+    .talk-shadow{
+      box-shadow: inset 5px 5px 10px #dfdfdf,
+        inset -5px -5px 10px #fbfbfb;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
 
     div{
       width: 70%;
@@ -55,7 +64,6 @@ input[type='number']::-webkit-outer-spin-button {
       }
 
       &.other{
-        background-color : #eee;
         margin : 20px 0px 2px 0;	
       }
     }

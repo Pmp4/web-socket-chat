@@ -12,10 +12,11 @@ const Chat = () => {
 
     const ws = useRef(null);    //webSocket을 담는 변수, 
                                 //컴포넌트가 변경될 때 객체가 유지되어야하므로 'ref'로 저장
+    let chattIdx = useRef(0);    
 
-    const msgBox = chatt.map((item) => (
-        <div className={item.name === name ? 'me' : 'other'}>
-            <span><b>{item.mid}</b></span> [ {item.date} ]<br/>
+    const msgBox = chatt.map((item, idx) => (
+        <div key={idx} className={item.name === name ? 'me' : 'other'}>
+            <span><b>{item.name}</b></span> [ {item.date} ]<br/>
             <span>{item.msg}</span>
         </div>
     ));
@@ -29,20 +30,18 @@ const Chat = () => {
     }, []);
 
 
-    const GlobalStyle = createGlobalStyle`
+    const GlobalStyle = createGlobalStyle`  //css 초기화가 된 component
         ${reset}
     `;
 
-    /**
-     * web socket
-     */
 
-    function getId(id){
-        return document.getElementById(id);
-    }
-
-    var data = {};  //전송 데이터(JSON)
-    // let ws = "";
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+    let data = {};  //전송 데이터(JSON)
 
     const onText = event => {
         console.log(event.target.value);
@@ -53,10 +52,24 @@ const Chat = () => {
         ws.current = new WebSocket("ws://localhost:8080/socket/chatt");
         // console.log(ws.current);
 
-        ws.current.onmessage = function(msg){
+        ws.current.onmessage = (message) => {
+            const dataSet = JSON.parse(message.data);
+
+            // console.log(message);
+            console.log(dataSet);
+            
+            let tempChatt = [...chatt];
+            console.log(tempChatt);
+            tempChatt.push(dataSet);
+
+            setChatt(tempChatt);
+        }
+
+        /* ws.current.onmessage = function(msg){
             console.log(msg);
-            var data = JSON.parse(msg.data);
+            const data = JSON.parse(msg.data);
             console.log(data);
+            
             
             var css;
             
@@ -76,7 +89,7 @@ const Chat = () => {
             document.getElementById("talk").innerHTML += item;
             document.getElementById("talk").scrollTop=document.getElementById("talk").scrollHeight;//스크롤바 하단으로 이동
             
-        }
+        }*/
     });
 
     const send = useCallback(() => {
@@ -116,6 +129,13 @@ const Chat = () => {
         }
         setMsg("");
     });
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+    //webSocket
+
 
     return (
         <>
@@ -125,6 +145,7 @@ const Chat = () => {
                     <h1 id="title">WebSocket Chatting</h1>
                     <br/>
                     <div id='talk'>
+                        <div className='talk-shadow'></div>
                         {msgBox}
                     </div>
                     <input disabled={chkLog}
