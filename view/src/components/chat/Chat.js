@@ -9,6 +9,7 @@ const Chat = () => {
     const [name, setName] = useState("");
     const [chatt, setChatt] = useState([]);
     const [chkLog, setChkLog] = useState(false);
+    const [socketData, setSocketData] = useState();
 
     const ws = useRef(null);    //webSocket을 담는 변수, 
                                 //컴포넌트가 변경될 때 객체가 유지되어야하므로 'ref'로 저장
@@ -29,6 +30,14 @@ const Chat = () => {
             })
     }, []);
 
+    useEffect(() => {
+        if(socketData !== undefined) {
+            const tempData = chatt.concat(socketData);
+            console.log(tempData);
+            setChatt(tempData);
+        }
+    }, [socketData]);
+
 
     const GlobalStyle = createGlobalStyle`  //css 초기화가 된 component
         ${reset}
@@ -41,61 +50,21 @@ const Chat = () => {
     //webSocket
     //webSocket
     //webSocket
-    let data = {};  //전송 데이터(JSON)
-
     const onText = event => {
         console.log(event.target.value);
         setMsg(event.target.value);
     }
 
-    const chattLogSet = (data) => {
-        
-            // console.log(message);
-            console.log(data);
-            console.log(JSON.stringify(chatt))
-            let tempChatt = [...chatt];
-            console.log(tempChatt);
-            tempChatt.push(data);
-
-            setChatt(tempChatt);
-    };
     
     const webSocketLogin = useCallback(() => {
         ws.current = new WebSocket("ws://localhost:8080/socket/chatt");
-        // console.log(ws.current);
 
         ws.current.onmessage = (message) => {
             const dataSet = JSON.parse(message.data);
-
-            chattLogSet(dataSet);
+            setSocketData(dataSet);
         }
-
-        /* ws.current.onmessage = function(msg){
-            console.log(msg);
-            const data = JSON.parse(msg.data);
-            console.log(data);
-            
-            
-            var css;
-            
-            console.log(data.mid);
-            if(data.name === name){
-                css = 'class=me';
-            }else{
-                css = 'class=other';
-            }
-            
-            var item = `<div ${css} >
-                            <span><b>${data.name}</b></span> [ ${data.date} ]<br/>
-                        <span>${data.msg}</span>
-                            </div>`;
-                        
-            
-            document.getElementById("talk").innerHTML += item;
-            document.getElementById("talk").scrollTop=document.getElementById("talk").scrollHeight;//스크롤바 하단으로 이동
-            
-        }*/
     });
+
 
     const send = useCallback(() => {
         if(!chkLog) {
@@ -109,12 +78,15 @@ const Chat = () => {
         }
 
         if(msg !== ''){
-            data.name = name;
-            data.msg = msg;
-            data.date = new Date().toLocaleString();
+            const data = {
+                name,
+                msg,
+                date: new Date().toLocaleString(),
+            };  //전송 데이터(JSON)
+
             const temp = JSON.stringify(data);
             
-            if(ws.current.readyState === 0) {
+            if(ws.current.readyState === 0) {   //readyState는 웹 소켓 연결 상태를 나타냄
                 ws.current.onopen = () => { //webSocket이 맺어지고 난 후, 실행
                     console.log(ws.current.readyState);
                     ws.current.send(temp);
@@ -122,11 +94,6 @@ const Chat = () => {
             }else {
                 ws.current.send(temp);
             }
-            
-            // ws.current.onopen = () => { //webSocket이 맺어지고 난 후, 실행
-            //     console.log(ws.current.readyState);
-            //     ws.current.send(temp);
-            // }
         }else {
             alert("메세지를 입력하세요.");
             document.getElementById("msg").focus();
@@ -142,6 +109,7 @@ const Chat = () => {
     //webSocket
 
 
+    
     return (
         <>
             <GlobalStyle/>

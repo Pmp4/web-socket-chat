@@ -10,9 +10,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @ServerEndpoint("/socket/chatt")
@@ -23,6 +21,8 @@ public class WebSocketChat {
     @OnOpen
     public void onOpen(Session session) {
         logger.info("open session : {}, clients={}", session.toString(), clients);
+        Map<String, List<String>> res = session.getRequestParameterMap();
+        logger.info("res={}", res);
 
 
         if(!clients.contains(session)) {
