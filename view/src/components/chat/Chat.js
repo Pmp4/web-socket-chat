@@ -47,6 +47,18 @@ const Chat = () => {
         console.log(event.target.value);
         setMsg(event.target.value);
     }
+
+    const chattLogSet = (data) => {
+        
+            // console.log(message);
+            console.log(data);
+            console.log(JSON.stringify(chatt))
+            let tempChatt = [...chatt];
+            console.log(tempChatt);
+            tempChatt.push(data);
+
+            setChatt(tempChatt);
+    };
     
     const webSocketLogin = useCallback(() => {
         ws.current = new WebSocket("ws://localhost:8080/socket/chatt");
@@ -55,14 +67,7 @@ const Chat = () => {
         ws.current.onmessage = (message) => {
             const dataSet = JSON.parse(message.data);
 
-            // console.log(message);
-            console.log(dataSet);
-            
-            let tempChatt = [...chatt];
-            console.log(tempChatt);
-            tempChatt.push(dataSet);
-
-            setChatt(tempChatt);
+            chattLogSet(dataSet);
         }
 
         /* ws.current.onmessage = function(msg){
