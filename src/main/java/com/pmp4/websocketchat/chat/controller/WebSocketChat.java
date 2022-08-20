@@ -24,7 +24,6 @@ public class WebSocketChat {
         Map<String, List<String>> res = session.getRequestParameterMap();
         logger.info("res={}", res);
 
-
         if(!clients.contains(session)) {
             clients.add(session);
             logger.info("session open : {}", session);
@@ -39,7 +38,6 @@ public class WebSocketChat {
 
         for (Session s : clients) {
             logger.info("send data : {}", message);
-
             s.getBasicRemote().sendText(message);
         }
     }

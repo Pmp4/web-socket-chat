@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {createGlobalStyle} from 'styled-components';
-import reset from 'styled-reset'
-import ChattService from '../../api/ChattService';
+import reset from 'styled-reset';
 
 
 const Chat = () => {
@@ -13,7 +12,6 @@ const Chat = () => {
 
     const ws = useRef(null);    //webSocket을 담는 변수, 
                                 //컴포넌트가 변경될 때 객체가 유지되어야하므로 'ref'로 저장
-    let chattIdx = useRef(0);    
 
     const msgBox = chatt.map((item, idx) => (
         <div key={idx} className={item.name === name ? 'me' : 'other'}>
@@ -21,14 +19,6 @@ const Chat = () => {
             <span>{item.msg}</span>
         </div>
     ));
-
-
-    useEffect(() => {
-        ChattService.chattView()
-            .then((response) => {
-                console.log(response);
-            })
-    }, []);
 
     useEffect(() => {
         if(socketData !== undefined) {

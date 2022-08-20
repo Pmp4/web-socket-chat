@@ -42,8 +42,8 @@ input[type='number']::-webkit-outer-spin-button {
     position: relative;
 
     .talk-shadow{
-      box-shadow: inset 5px 5px 10px #dfdfdf,
-        inset -5px -5px 10px #fbfbfb;
+      // box-shadow: inset 5px 5px 10px #dfdfdf,
+      //   inset -5px -5px 10px #fbfbfb;
       position: absolute;
       top: 0;
       left: 0;
@@ -52,15 +52,15 @@ input[type='number']::-webkit-outer-spin-button {
     }
 
     div{
-      width: 70%;
+      width: 60%;
       display: block;
-      padding: 6px;
+      padding: 10px;
       border-radius:10px;
       box-sizing: border-box;
 
       &.me{
         background-color : #ffc;
-        margin : 20px 0px 2px 30%;	
+        margin : 0px 0px 20px 40%;	
       }
 
       &.other{
